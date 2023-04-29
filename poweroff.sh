@@ -7,10 +7,9 @@ echo "Location of a script - $PWD"
 options=("Power Off - Shuts down the device immediately" 
 "Power Off in 1 minute - Shuts down the device in 1 minute" 
 "Reboot - Reboot the device" 
-"Log Off - logs of from the root" 
-"Quit")
-
+"Log Off - logs of from the root")
 quitOptions=("Yes" "No")
+isPowOff1m=false
 
 echo "Choose an option of exiting a device"
 select opt in "${options[@]}"
@@ -18,11 +17,13 @@ do
 case $opt in
 "Power Off - Shuts down the device immediately")
     echo "Shutting down a device..."
-    systemctl shutdown now
+    shutdown now
     ;;
 "Power Off in 1 minute - Shuts down the device in 1 minute")
     echo "Shutting down a device in 10 second..."
-    systemctl shutdown -t 1
+    shutdown -t 1
+    isPowOff1m=true
+    break
     ;;
 "Reboot - Reboot the device")
     echo "Rebooting the device..."
@@ -32,15 +33,12 @@ case $opt in
     echo "Logging off the root..."
     exit
     ;;
-"Quit")
-    break
-    ;;
 *)
     echo "Invalid option '$REPLY'";;
     esac
 done
 
-if [[$opt == "Power Off in 10 seconds - Shuts down the device in 10 seconds"]]
+if [ $isPowOff1m = true ]
 then
     echo "Do you want to cancel the shutdown?"
     select quit in "${quitOptions[@]}"
@@ -48,15 +46,17 @@ then
     case $quit in
     "Yes")
         echo "Cancelling..."
-        systemctl shutdown -c
+        shutdown -c
+        exit
         ;;
     "No")
         echo "See you on the other side :)"
-        break
+        exit
         ;;
     *)
         echo "Invalid option '$REPLY'";;
         esac
     done
 else
-    break
+    exit
+fi
