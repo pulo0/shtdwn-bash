@@ -1,7 +1,6 @@
 #!/bin/bash
 
 date
-chmod 755 poweroff.sh
 echo "Location of a script - $PWD"
 
 options=("Power Off - Shuts down the device immediately" 
